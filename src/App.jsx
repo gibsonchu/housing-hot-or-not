@@ -6,16 +6,19 @@ const STORE = 'hhon_nyc_v2';
 const K_FACTOR = 32;
 const START_RATING = 1400;
 
-const ink = '#16271e';
-const green = '#3fae72';
-const greenDeep = '#2e8255';
-const greenBright = '#5cc98a';
-const line = '#e6efe9';
-const gray = '#5e6f66';
-const mint = 'linear-gradient(180deg,#edf7f0 0%,#d7eede 100%)';
-const serif = "'Fraunces','Georgia',serif";
-const sans = "'Helvetica Neue',Helvetica,Arial,sans-serif";
-const cardShadow = '0 18px 44px -18px rgba(22,39,30,0.30)';
+// HPD ADU design system: deep indigo brand (#070061) + lime highlight (#a2ec32) on white.
+const brand = '#070061';
+const highlight = '#a2ec32';
+const ink = '#070061';        // indigo as primary UI/heading color
+const green = '#070061';      // (alias) primary accent/buttons → indigo
+const greenDeep = '#070061';  // (alias) accent text → indigo
+const greenBright = '#a2ec32';
+const line = '#e5e7eb';
+const gray = '#5b6470';
+const mint = 'linear-gradient(180deg,#f4f4fd 0%,#e9e9f8 100%)';
+const serif = "'Barlow Semi Condensed','Arial Narrow',sans-serif";
+const sans = "'Barlow','Helvetica Neue',Helvetica,Arial,sans-serif";
+const cardShadow = '0 18px 44px -18px rgba(7,0,97,0.28)';
 const typeLine = (n, t) => (t && t !== '—' ? n + '  ·  ' + t : n);
 
 // Source: NYC Open Data, "Affordable Housing Production by Building"
@@ -233,29 +236,29 @@ export default function App() {
   });
   const greenBtn = { background: green, color: '#fff', border: 'none', padding: '13px 24px', borderRadius: 999, cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.01em' };
   const softBtn = { background: '#fff', color: ink, border: `1.5px solid ${line}`, padding: '13px 24px', borderRadius: 999, cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.01em' };
-  const cardBox = { background: '#fff', border: `1px solid ${line}`, borderRadius: 20, boxShadow: '0 12px 30px -20px rgba(22,39,30,0.25)', overflow: 'hidden' };
-  const cardHead = { background: '#f4faf6', borderBottom: `1px solid ${line}`, padding: '13px 18px', fontFamily: serif, fontSize: 16, fontWeight: 600, color: ink, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' };
+  const cardBox = { background: '#fff', border: `1px solid ${line}`, borderRadius: 20, boxShadow: '0 12px 30px -20px rgba(7,0,97,0.25)', overflow: 'hidden' };
+  const cardHead = { background: '#f4f4fd', borderBottom: `1px solid ${line}`, padding: '13px 18px', fontFamily: serif, fontSize: 16, fontWeight: 600, color: ink, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' };
   const fieldStyle = { border: `1.5px solid ${line}`, padding: '11px 13px', fontSize: 14, background: '#fff', width: '100%', borderRadius: 12, color: ink };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
     <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(42vw,440px)', cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ padding: '30px 26px 16px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 9px', borderRadius: 999, background: '#fff', color: greenDeep, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 14 }}>{badge}</div>
-        <div style={{ fontFamily: serif, fontSize: 25, fontWeight: 600, color: ink, lineHeight: 1.18 }}>{b.address}</div>
-        <div style={{ fontSize: 13, color: gray, marginTop: 9, letterSpacing: '0.01em' }}>{typeLine(b.neighborhood, b.type)}</div>
-      </div>
-      <div style={{ position: 'relative', flex: 1, minHeight: 270, margin: '0 18px 18px', borderRadius: 18, overflow: 'hidden' }}>
+      <div style={{ position: 'relative', minHeight: 270, margin: '18px 18px 0', borderRadius: 18, overflow: 'hidden' }}>
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', left: 12, bottom: 12, background: 'rgba(255,255,255,0.92)', color: greenDeep, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(22,39,30,0.28)' }}>
-            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 28px', borderRadius: 20, textAlign: 'center', boxShadow: '0 16px 40px -10px rgba(22,39,30,0.4)' }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(7,0,97,0.28)' }}>
+            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 28px', borderRadius: 20, textAlign: 'center', boxShadow: '0 16px 40px -10px rgba(7,0,97,0.4)' }}>
               <div style={{ width: 38, height: 38, borderRadius: 999, background: green, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, margin: '0 auto 8px' }}>✓</div>
               <div style={{ fontFamily: serif, fontSize: 30, fontWeight: 600, color: greenDeep }}>+{flashDelta}</div>
               <div style={{ fontSize: 10, letterSpacing: '0.28em', color: gray, marginTop: 2 }}>ELO</div>
             </div>
           </div>
         )}
+      </div>
+      <div style={{ padding: '18px 26px 26px', textAlign: 'center' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 9px', borderRadius: 999, background: '#fff', color: greenDeep, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 14, boxShadow: '0 2px 8px -2px rgba(7,0,97,0.25)' }}>{badge}</div>
+        <div style={{ fontFamily: serif, fontSize: 25, fontWeight: 600, color: ink, lineHeight: 1.18 }}>{b.address}</div>
+        <div style={{ fontSize: 13, color: gray, marginTop: 9, letterSpacing: '0.01em' }}>{typeLine(b.neighborhood, b.type)}</div>
       </div>
     </div>
   );
@@ -265,7 +268,7 @@ export default function App() {
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', borderBottom: `1px solid ${line}`, padding: '14px 22px', flexWrap: 'wrap', gap: 10 }}>
         <button onClick={() => setScreen('vote')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0, fontFamily: serif, fontSize: 21, fontWeight: 600, color: ink, letterSpacing: '-0.01em' }}>
-          Housing: Hot or Not <span style={{ color: green }}>/ NYC</span>
+          Facade <span style={{ background: highlight, color: ink, padding: '0 6px', borderRadius: 6 }}>Off</span>
         </button>
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
           <button onClick={() => setScreen('vote')} className="nav-link" style={navItem(screen === 'vote')}>Vote</button>
@@ -282,15 +285,15 @@ export default function App() {
             <div style={{ fontFamily: serif, fontSize: 'clamp(20px,2.6vw,26px)', fontWeight: 500, color: green, marginTop: 6 }}>You be the judge.</div>
             <div style={{ fontSize: 15, color: gray, marginTop: 18, lineHeight: 1.6, maxWidth: 520 }}>Two real NYC affordable housing buildings, side by side. Pick the one with better design — proportion, materials, and how it meets the street.</div>
             <div style={{ display: 'flex', gap: 8, marginTop: 18, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <span style={{ background: '#f1f8f4', color: greenDeep, padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }}>{totalVotes.toLocaleString()} votes cast</span>
-              <span style={{ background: '#f1f8f4', color: gray, padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em' }}>← / → or click · S to skip</span>
+              <span style={{ background: '#eeeefb', color: greenDeep, padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }}>{totalVotes.toLocaleString()} votes cast</span>
+              <span style={{ background: '#eeeefb', color: gray, padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em' }}>← / → or click · S to skip</span>
             </div>
           </div>
 
           {left && right ? (
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 32px 48px', gap: 0, flexWrap: 'wrap' }}>
               <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
-              <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(22,39,30,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3, margin: '0 -16px' }}>or</div>
+              <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(7,0,97,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3, margin: '0 -16px' }}>or</div>
               <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
             </div>
           ) : (
@@ -305,7 +308,7 @@ export default function App() {
           <h1 style={{ fontFamily: serif, fontSize: 'clamp(30px,4vw,42px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0 }}>Rankings</h1>
           <div style={{ fontSize: 15, color: gray, marginTop: 8, marginBottom: 26 }}>How the city's buildings stack up, by Elo rating.</div>
           <div style={cardBox}>
-            <div style={{ display: 'flex', background: '#f4faf6', color: gray, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: `1px solid ${line}` }}>
+            <div style={{ display: 'flex', background: '#f4f4fd', color: gray, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: `1px solid ${line}` }}>
               <span style={{ width: 52, padding: '14px 16px' }}>#</span>
               <span style={{ flex: 2, padding: '14px 16px' }}>Building</span>
               <span style={{ flex: 1.5, padding: '14px 16px' }}>Neighborhood</span>

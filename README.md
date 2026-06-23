@@ -1,4 +1,4 @@
-# Housing: Hot or Not / NYC
+# Facade Off
 
 A head-to-head voting game for real, recently completed NYC affordable housing buildings. Two buildings appear side by side; you pick the better-designed one and each gains/loses an Elo rating, the same system used to rank chess players.
 
