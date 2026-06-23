@@ -241,8 +241,8 @@ export default function App() {
   const fieldStyle = { border: `1.5px solid ${line}`, padding: '11px 13px', fontSize: 14, background: '#fff', width: '100%', borderRadius: 12, color: ink };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
-    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(42vw,440px)', cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ position: 'relative', minHeight: 270, margin: '18px 18px 0', borderRadius: 18, overflow: 'hidden' }}>
+    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(42vw,440px)', height: '100%', maxHeight: 420, cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', flex: 1, minHeight: 140, margin: '14px 16px 0', borderRadius: 18, overflow: 'hidden' }}>
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', left: 12, bottom: 12, background: 'rgba(255,255,255,0.92)', color: greenDeep, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
@@ -264,7 +264,7 @@ export default function App() {
   );
 
   return (
-    <div style={{ fontFamily: sans, fontVariantNumeric: 'tabular-nums', color: ink, background: '#fff', minHeight: '100vh', display: 'flex', flexDirection: 'column' }}>
+    <div style={{ fontFamily: sans, fontVariantNumeric: 'tabular-nums', color: ink, background: '#fff', height: screen === 'vote' ? '100vh' : 'auto', minHeight: '100vh', overflow: screen === 'vote' ? 'hidden' : 'visible', display: 'flex', flexDirection: 'column' }}>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', borderBottom: `1px solid ${line}`, padding: '14px 22px', flexWrap: 'wrap', gap: 10 }}>
         <button onClick={() => setScreen('vote')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0, fontFamily: serif, fontSize: 21, fontWeight: 600, color: ink, letterSpacing: '-0.01em' }}>
@@ -279,27 +279,27 @@ export default function App() {
       </div>
 
       {screen === 'vote' && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '52px 20px 8px' }}>
-            <h1 style={{ fontFamily: serif, fontSize: 'clamp(34px,5vw,52px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0, lineHeight: 1.05, maxWidth: 720 }}>Which is better designed?</h1>
-            <div style={{ fontFamily: serif, fontSize: 'clamp(20px,2.6vw,26px)', fontWeight: 500, color: green, marginTop: 6 }}>You be the judge.</div>
-            <div style={{ fontSize: 15, color: gray, marginTop: 18, lineHeight: 1.6, maxWidth: 520 }}>Two real NYC affordable housing buildings, side by side. Pick the one with better design — proportion, materials, and how it meets the street.</div>
-            <div style={{ display: 'flex', gap: 8, marginTop: 18, flexWrap: 'wrap', justifyContent: 'center' }}>
-              <span style={{ background: '#eeeefb', color: greenDeep, padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em' }}>{totalVotes.toLocaleString()} votes cast</span>
-              <span style={{ background: '#eeeefb', color: gray, padding: '6px 14px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em' }}>← / → or click · S to skip</span>
-            </div>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '20px 20px 0', flex: 'none' }}>
+            <h1 style={{ fontFamily: serif, fontSize: 'clamp(24px,3.4vw,34px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0, lineHeight: 1.12, maxWidth: 680 }}>What does quality housing design look like?</h1>
+            <div style={{ fontSize: 14, color: gray, marginTop: 10, lineHeight: 1.55, maxWidth: 580 }}>Cities spend billions building housing, but we rarely ask the public what good housing looks like.</div>
+            <div style={{ fontSize: 14, color: gray, marginTop: 4, lineHeight: 1.55, maxWidth: 580 }}>Compare two real affordable housing developments and choose the one you think is better designed. Together, these votes help uncover the design qualities people value most.</div>
+            <span style={{ background: '#eeeefb', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 12 }}>{totalVotes.toLocaleString()} votes cast</span>
           </div>
 
           {left && right ? (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 32px 48px', gap: 0, flexWrap: 'wrap' }}>
-              <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
-              <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(7,0,97,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3, margin: '0 -16px' }}>or</div>
-              <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
+            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, padding: '14px 32px 0', gap: 6 }}>
+              <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, flexWrap: 'wrap', width: '100%' }}>
+                <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
+                <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(7,0,97,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3, margin: '0 -16px' }}>or</div>
+                <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
+              </div>
+              <span style={{ background: '#eeeefb', color: gray, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em', flex: 'none' }}>← / → or click · S to skip</span>
             </div>
           ) : (
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 60, textAlign: 'center', fontSize: 15, color: gray }}>Need at least two buildings — add some in Admin.</div>
           )}
-          <div style={{ marginTop: 'auto', padding: 20, textAlign: 'center', fontSize: 13, color: gray, borderTop: `1px solid ${line}` }}>{totalVotes.toLocaleString()} votes&nbsp;&nbsp;·&nbsp;&nbsp;{buildings.length} buildings</div>
+          <div style={{ flex: 'none', padding: '10px 20px', textAlign: 'center', fontSize: 13, color: gray, borderTop: `1px solid ${line}` }}>{totalVotes.toLocaleString()} votes&nbsp;&nbsp;·&nbsp;&nbsp;{buildings.length} buildings</div>
         </div>
       )}
 
