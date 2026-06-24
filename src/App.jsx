@@ -251,8 +251,8 @@ export default function App() {
   const fieldStyle = { border: `1.5px solid ${line}`, padding: '11px 13px', fontSize: 14, background: '#fff', width: '100%', borderRadius: 12, color: ink };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
-    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(42vw,440px)', height: '100%', maxHeight: 420, cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ position: 'relative', flex: 1, minHeight: 140, margin: '14px 16px 0', borderRadius: 18, overflow: 'hidden' }}>
+    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,400px)', height: '100%', maxHeight: 380, cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', flex: 1, minHeight: 130, margin: '14px 16px 0', borderRadius: 18, overflow: 'hidden' }}>
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', left: 12, bottom: 12, background: 'rgba(255,255,255,0.92)', color: greenDeep, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
@@ -265,10 +265,10 @@ export default function App() {
           </div>
         )}
       </div>
-      <div style={{ padding: '18px 26px 26px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 9px', borderRadius: 999, background: '#fff', color: greenDeep, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 14, boxShadow: '0 2px 8px -2px rgba(28,122,140,0.25)' }}>{badge}</div>
-        <div style={{ fontFamily: serif, fontSize: 25, fontWeight: 600, color: ink, lineHeight: 1.18 }}>{b.address}</div>
-        <div style={{ fontSize: 13, color: gray, marginTop: 9, letterSpacing: '0.01em' }}>{typeLine(b.neighborhood, b.type)}</div>
+      <div style={{ padding: '14px 22px 20px', textAlign: 'center' }}>
+        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 9px', borderRadius: 999, background: '#fff', color: greenDeep, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 12, boxShadow: '0 2px 8px -2px rgba(28,122,140,0.25)' }}>{badge}</div>
+        <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 600, color: ink, lineHeight: 1.18 }}>{b.address}</div>
+        <div style={{ fontSize: 12, color: gray, marginTop: 7, letterSpacing: '0.01em' }}>{typeLine(b.neighborhood, b.type)}</div>
       </div>
     </div>
   );
@@ -289,26 +289,26 @@ export default function App() {
       </div>
 
       {screen === 'vote' && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '20px 20px 0', flex: 'none' }}>
-            <h1 style={{ fontFamily: serif, fontSize: 'clamp(24px,3.4vw,34px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0, lineHeight: 1.12, maxWidth: 680 }}>What does quality housing design look like?</h1>
-            <div style={{ fontSize: 14, color: gray, marginTop: 10, lineHeight: 1.55, maxWidth: 580 }}>Compare two real affordable housing developments and choose the one you think is better designed.</div>
-            <span style={{ background: '#eaf4f5', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 12 }}>{userVotes.toLocaleString()} votes cast</span>
+        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, overflow: 'hidden' }}>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '44px 20px 0', flex: 'none' }}>
+            <h1 style={{ fontFamily: serif, fontSize: 'clamp(24px,3.4vw,34px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0, lineHeight: 1.12, maxWidth: 680 }}>What does quality housing design look like to you?</h1>
+            <div style={{ fontSize: 14, color: gray, marginTop: 10, lineHeight: 1.55, whiteSpace: 'nowrap' }}>Compare two real affordable housing developments and choose the one you think is better designed.</div>
+            <span style={{ background: '#eaf4f5', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 12 }}>{userVotes.toLocaleString()} votes you cast</span>
           </div>
 
           {left && right ? (
-            <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, padding: '14px 32px 0', gap: 6 }}>
-              <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, flexWrap: 'wrap', width: '100%' }}>
-                <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
-                <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(28,122,140,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3, margin: '0 -16px' }}>or</div>
-                <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
+            <div style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '28px 32px 0', gap: 36 }}>
+              <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, flex: 'none' }}>
+                <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(28,122,140,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3 }}>or</div>
+                <span style={{ background: '#eaf4f5', color: gray, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>← / → or click · S to skip</span>
               </div>
-              <span style={{ background: '#eaf4f5', color: gray, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em', flex: 'none' }}>← / → or click · S to skip</span>
+              <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
             </div>
           ) : (
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 60, textAlign: 'center', fontSize: 15, color: gray }}>Need at least two buildings — add some in Admin.</div>
           )}
-          <div style={{ flex: 'none', padding: '10px 20px', textAlign: 'center', fontSize: 13, color: gray, borderTop: `1px solid ${line}` }}>{totalVotes.toLocaleString()} votes&nbsp;&nbsp;·&nbsp;&nbsp;{buildings.length} buildings</div>
+          <div style={{ flex: 'none', padding: '18px 20px 0', textAlign: 'center', fontSize: 13, color: gray }}>{totalVotes.toLocaleString()} votes&nbsp;&nbsp;·&nbsp;&nbsp;{buildings.length} buildings</div>
         </div>
       )}
 
