@@ -292,7 +292,8 @@ export default function App() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '20px 20px 0', flex: 'none' }}>
             <h1 style={{ fontFamily: serif, fontSize: 'clamp(24px,3.4vw,34px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0, lineHeight: 1.12, maxWidth: 680 }}>What does quality housing design look like?</h1>
-            <span style={{ background: '#eaf4f5', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 14 }}>{userVotes.toLocaleString()} votes cast</span>
+            <div style={{ fontSize: 14, color: gray, marginTop: 10, lineHeight: 1.55, maxWidth: 580 }}>Compare two real affordable housing developments and choose the one you think is better designed.</div>
+            <span style={{ background: '#eaf4f5', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 12 }}>{userVotes.toLocaleString()} votes cast</span>
           </div>
 
           {left && right ? (
