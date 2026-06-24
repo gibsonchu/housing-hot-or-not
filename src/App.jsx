@@ -3,22 +3,23 @@ import Photo from './Photo';
 import './App.css';
 
 const STORE = 'hhon_nyc_v2';
+const USER_VOTES_STORE = 'hhon_user_votes_v1';
 const K_FACTOR = 32;
 const START_RATING = 1400;
 
-// HPD ADU design system: deep indigo brand (#070061) + lime highlight (#a2ec32) on white.
-const brand = '#070061';
-const highlight = '#a2ec32';
-const ink = '#070061';        // indigo as primary UI/heading color
-const green = '#070061';      // (alias) primary accent/buttons → indigo
-const greenDeep = '#070061';  // (alias) accent text → indigo
-const greenBright = '#a2ec32';
+// HPD (nyc.gov/hpd) design system: black text, white background, teal accent.
+const brand = '#1c7a8c';
+const highlight = '#1c7a8c';
+const ink = '#111111';        // black as primary UI/heading color
+const green = '#1c7a8c';      // (alias) primary accent/buttons → teal
+const greenDeep = '#1c7a8c';  // (alias) accent text → teal
+const greenBright = '#1c7a8c';
 const line = '#e5e7eb';
 const gray = '#5b6470';
-const mint = 'linear-gradient(180deg,#f4f4fd 0%,#e9e9f8 100%)';
+const mint = 'linear-gradient(180deg,#f2f8f9 0%,#e4eff1 100%)';
 const serif = "'Barlow Semi Condensed','Arial Narrow',sans-serif";
 const sans = "'Barlow','Helvetica Neue',Helvetica,Arial,sans-serif";
-const cardShadow = '0 18px 44px -18px rgba(7,0,97,0.28)';
+const cardShadow = '0 18px 44px -18px rgba(28,122,140,0.28)';
 const typeLine = (n, t) => (t && t !== '—' ? n + '  ·  ' + t : n);
 
 // Source: NYC Open Data, "Affordable Housing Production by Building"
@@ -74,6 +75,10 @@ export default function App() {
   const [editId, setEditId] = useState(null);
   const [bulk, setBulk] = useState('');
   const [copied, setCopied] = useState(false);
+  const [userVotes, setUserVotes] = useState(() => {
+    const n = parseInt(localStorage.getItem(USER_VOTES_STORE), 10);
+    return Number.isFinite(n) ? n : 0;
+  });
 
   const buildingsRef = useRef(buildings);
   buildingsRef.current = buildings;
@@ -110,6 +115,11 @@ export default function App() {
     setBuildings(next);
     setFlash(idx === 0 ? 'left' : 'right');
     setFlashDelta(delta);
+    setUserVotes((n) => {
+      const nv = n + 1;
+      try { localStorage.setItem(USER_VOTES_STORE, String(nv)); } catch (e) {}
+      return nv;
+    });
     setTimeout(() => newPair(next), 950);
   }
 
@@ -236,8 +246,8 @@ export default function App() {
   });
   const greenBtn = { background: green, color: '#fff', border: 'none', padding: '13px 24px', borderRadius: 999, cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.01em' };
   const softBtn = { background: '#fff', color: ink, border: `1.5px solid ${line}`, padding: '13px 24px', borderRadius: 999, cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.01em' };
-  const cardBox = { background: '#fff', border: `1px solid ${line}`, borderRadius: 20, boxShadow: '0 12px 30px -20px rgba(7,0,97,0.25)', overflow: 'hidden' };
-  const cardHead = { background: '#f4f4fd', borderBottom: `1px solid ${line}`, padding: '13px 18px', fontFamily: serif, fontSize: 16, fontWeight: 600, color: ink, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' };
+  const cardBox = { background: '#fff', border: `1px solid ${line}`, borderRadius: 20, boxShadow: '0 12px 30px -20px rgba(28,122,140,0.25)', overflow: 'hidden' };
+  const cardHead = { background: '#eaf4f5', borderBottom: `1px solid ${line}`, padding: '13px 18px', fontFamily: serif, fontSize: 16, fontWeight: 600, color: ink, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' };
   const fieldStyle = { border: `1.5px solid ${line}`, padding: '11px 13px', fontSize: 14, background: '#fff', width: '100%', borderRadius: 12, color: ink };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
@@ -246,8 +256,8 @@ export default function App() {
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', left: 12, bottom: 12, background: 'rgba(255,255,255,0.92)', color: greenDeep, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(7,0,97,0.28)' }}>
-            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 28px', borderRadius: 20, textAlign: 'center', boxShadow: '0 16px 40px -10px rgba(7,0,97,0.4)' }}>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(28,122,140,0.28)' }}>
+            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 28px', borderRadius: 20, textAlign: 'center', boxShadow: '0 16px 40px -10px rgba(28,122,140,0.4)' }}>
               <div style={{ width: 38, height: 38, borderRadius: 999, background: green, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, margin: '0 auto 8px' }}>✓</div>
               <div style={{ fontFamily: serif, fontSize: 30, fontWeight: 600, color: greenDeep }}>+{flashDelta}</div>
               <div style={{ fontSize: 10, letterSpacing: '0.28em', color: gray, marginTop: 2 }}>ELO</div>
@@ -256,7 +266,7 @@ export default function App() {
         )}
       </div>
       <div style={{ padding: '18px 26px 26px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 9px', borderRadius: 999, background: '#fff', color: greenDeep, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 14, boxShadow: '0 2px 8px -2px rgba(7,0,97,0.25)' }}>{badge}</div>
+        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 9px', borderRadius: 999, background: '#fff', color: greenDeep, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 14, boxShadow: '0 2px 8px -2px rgba(28,122,140,0.25)' }}>{badge}</div>
         <div style={{ fontFamily: serif, fontSize: 25, fontWeight: 600, color: ink, lineHeight: 1.18 }}>{b.address}</div>
         <div style={{ fontSize: 13, color: gray, marginTop: 9, letterSpacing: '0.01em' }}>{typeLine(b.neighborhood, b.type)}</div>
       </div>
@@ -282,19 +292,17 @@ export default function App() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0, overflow: 'hidden' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '20px 20px 0', flex: 'none' }}>
             <h1 style={{ fontFamily: serif, fontSize: 'clamp(24px,3.4vw,34px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0, lineHeight: 1.12, maxWidth: 680 }}>What does quality housing design look like?</h1>
-            <div style={{ fontSize: 14, color: gray, marginTop: 10, lineHeight: 1.55, maxWidth: 580 }}>Cities spend billions building housing, but we rarely ask the public what good housing looks like.</div>
-            <div style={{ fontSize: 14, color: gray, marginTop: 4, lineHeight: 1.55, maxWidth: 580 }}>Compare two real affordable housing developments and choose the one you think is better designed. Together, these votes help uncover the design qualities people value most.</div>
-            <span style={{ background: '#eeeefb', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 12 }}>{totalVotes.toLocaleString()} votes cast</span>
+            <span style={{ background: '#eaf4f5', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 14 }}>{userVotes.toLocaleString()} votes cast</span>
           </div>
 
           {left && right ? (
             <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, padding: '14px 32px 0', gap: 6 }}>
               <div style={{ flex: 1, minHeight: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: 0, flexWrap: 'wrap', width: '100%' }}>
                 <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
-                <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(7,0,97,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3, margin: '0 -16px' }}>or</div>
+                <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(28,122,140,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3, margin: '0 -16px' }}>or</div>
                 <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
               </div>
-              <span style={{ background: '#eeeefb', color: gray, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em', flex: 'none' }}>← / → or click · S to skip</span>
+              <span style={{ background: '#eaf4f5', color: gray, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em', flex: 'none' }}>← / → or click · S to skip</span>
             </div>
           ) : (
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 60, textAlign: 'center', fontSize: 15, color: gray }}>Need at least two buildings — add some in Admin.</div>
@@ -308,7 +316,7 @@ export default function App() {
           <h1 style={{ fontFamily: serif, fontSize: 'clamp(30px,4vw,42px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0 }}>Rankings</h1>
           <div style={{ fontSize: 15, color: gray, marginTop: 8, marginBottom: 26 }}>How the city's buildings stack up, by Elo rating.</div>
           <div style={cardBox}>
-            <div style={{ display: 'flex', background: '#f4f4fd', color: gray, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: `1px solid ${line}` }}>
+            <div style={{ display: 'flex', background: '#eaf4f5', color: gray, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: `1px solid ${line}` }}>
               <span style={{ width: 52, padding: '14px 16px' }}>#</span>
               <span style={{ flex: 2, padding: '14px 16px' }}>Building</span>
               <span style={{ flex: 1.5, padding: '14px 16px' }}>Neighborhood</span>

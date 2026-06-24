@@ -12,20 +12,20 @@ input, textarea { font-family: 'Barlow', 'Helvetica Neue', Helvetica, Arial, san
 .pop { animation: hhonPop 0.45s cubic-bezier(.2,1.5,.3,1) both; }
 
 .nav-link { transition: background 0.15s ease, color 0.15s ease; }
-.nav-link:hover { background: #eeeefb; color: #070061; }
+.nav-link:hover { background: #eaf4f5; color: #1c7a8c; }
 
 .vote-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
-.vote-card:hover { transform: translateY(-4px); box-shadow: 0 28px 54px -18px rgba(7,0,97,0.34); }
+.vote-card:hover { transform: translateY(-4px); box-shadow: 0 28px 54px -18px rgba(28,122,140,0.34); }
 
 .rank-row { transition: background 0.12s ease; }
-.rank-row:hover { background: #f4f4fd; }
+.rank-row:hover { background: #eaf4f5; }
 
 .btn-green { transition: filter 0.15s ease, transform 0.15s ease; }
 .btn-green:hover { filter: brightness(1.18); }
 .btn-green:active { transform: translateY(1px); }
 
 .btn-soft { transition: background 0.15s ease, border-color 0.15s ease; }
-.btn-soft:hover { background: #eeeefb; }
+.btn-soft:hover { background: #eaf4f5; }
 
 .field { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-.field:focus { outline: none; border-color: #070061; box-shadow: 0 0 0 3px rgba(7,0,97,0.16); }
+.field:focus { outline: none; border-color: #1c7a8c; box-shadow: 0 0 0 3px rgba(28,122,140,0.16); }
