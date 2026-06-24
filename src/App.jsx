@@ -251,7 +251,7 @@ export default function App() {
   const fieldStyle = { border: `1.5px solid ${line}`, padding: '11px 13px', fontSize: 14, background: '#fff', width: '100%', borderRadius: 12, color: ink };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
-    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,400px)', height: '100%', maxHeight: 380, cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,400px)', height: '100%', maxHeight: 480, cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
       <div style={{ position: 'relative', flex: 1, minHeight: 130, margin: '14px 16px 0', borderRadius: 18, overflow: 'hidden' }}>
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', left: 12, bottom: 12, background: 'rgba(255,255,255,0.92)', color: greenDeep, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
@@ -301,7 +301,10 @@ export default function App() {
               <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
               <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, flex: 'none' }}>
                 <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(28,122,140,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3 }}>or</div>
-                <span style={{ background: '#eaf4f5', color: gray, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 500, letterSpacing: '0.02em', whiteSpace: 'nowrap' }}>← / → or click · S to skip</span>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: gray, fontSize: 13, fontWeight: 500, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 7px', borderRadius: 7, background: '#fff', border: `1.5px solid ${line}`, color: ink, fontSize: 12, fontWeight: 700, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>S</span>
+                  to skip
+                </span>
               </div>
               <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
             </div>
