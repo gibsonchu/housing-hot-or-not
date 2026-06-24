@@ -251,8 +251,8 @@ export default function App() {
   const fieldStyle = { border: `1.5px solid ${line}`, padding: '11px 13px', fontSize: 14, background: '#fff', width: '100%', borderRadius: 12, color: ink };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
-    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,400px)', height: '100%', maxHeight: 480, cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ position: 'relative', flex: 1, minHeight: 130, margin: '14px 16px 0', borderRadius: 18, overflow: 'hidden' }}>
+    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,48vh,400px)', cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', aspectRatio: '1 / 1', margin: '14px 16px 0', borderRadius: 18, overflow: 'hidden' }}>
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', left: 12, bottom: 12, background: 'rgba(255,255,255,0.92)', color: greenDeep, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
