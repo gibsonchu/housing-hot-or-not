@@ -291,7 +291,6 @@ export default function App() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, overflow: 'hidden' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '36px 20px 0', flex: 'none' }}>
             <h1 style={{ fontFamily: serif, fontSize: 'clamp(22px,2.8vw,30px)', fontWeight: 400, color: ink, margin: 0, lineHeight: 1.2, maxWidth: 600, textWrap: 'balance' }}>Which building is better designed?</h1>
-            <div style={{ fontSize: 11, fontFamily: sans, color: gray, marginTop: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{userVotes.toLocaleString()} votes you cast</div>
           </div>
 
           {left && right ? (
@@ -309,7 +308,7 @@ export default function App() {
           ) : (
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 60, textAlign: 'center', fontSize: 14, color: gray }}>Need at least two buildings — add some in Admin.</div>
           )}
-          <div style={{ flex: 'none', padding: '16px 20px 0', textAlign: 'center', fontSize: 11, fontFamily: sans, letterSpacing: '0.04em', color: gray }}>{buildings.length} buildings ranked</div>
+          <div style={{ flex: 'none', padding: '16px 20px 0', textAlign: 'center', fontSize: 11, fontFamily: sans, letterSpacing: '0.04em', color: gray }}>{totalVotes.toLocaleString()} total votes&nbsp;&nbsp;·&nbsp;&nbsp;{userVotes.toLocaleString()} votes you cast</div>
         </div>
       )}
 
