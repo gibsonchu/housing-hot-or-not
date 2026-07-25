@@ -291,6 +291,7 @@ export default function App() {
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, overflow: 'hidden' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '36px 20px 0', flex: 'none' }}>
             <h1 style={{ fontFamily: serif, fontSize: 'clamp(22px,2.8vw,30px)', fontWeight: 400, color: ink, margin: 0, lineHeight: 1.2, maxWidth: 600, textWrap: 'balance' }}>Which building is better designed?</h1>
+            <div style={{ fontSize: 12, fontFamily: sans, color: gray, marginTop: 18, letterSpacing: '0.02em' }}>Click a card, or use <kbd style={{ fontFamily: sans, fontSize: 11, background: '#f4f4f4', border: '1px solid #d8d8d8', borderRadius: 3, padding: '1px 5px' }}>A</kbd> / <kbd style={{ fontFamily: sans, fontSize: 11, background: '#f4f4f4', border: '1px solid #d8d8d8', borderRadius: 3, padding: '1px 5px' }}>D</kbd> or <kbd style={{ fontFamily: sans, fontSize: 11, background: '#f4f4f4', border: '1px solid #d8d8d8', borderRadius: 3, padding: '1px 5px' }}>←</kbd> / <kbd style={{ fontFamily: sans, fontSize: 11, background: '#f4f4f4', border: '1px solid #d8d8d8', borderRadius: 3, padding: '1px 5px' }}>→</kbd> to vote</div>
           </div>
 
           {left && right ? (
