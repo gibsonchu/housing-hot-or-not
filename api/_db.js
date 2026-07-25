@@ -26,6 +26,14 @@ async function connect() {
       begin: (fn) => sql.begin((tx) => fn({ query: (t, p = []) => tx.unsafe(t, p) })),
     };
   }
+  // PGlite writes to disk, which a serverless filesystem won't allow — and even
+  // if it did, each instance would get its own throwaway copy.
+  if (process.env.VERCEL) {
+    throw new Error(
+      'No database configured. Attach a Vercel Postgres store to this project ' +
+      'so POSTGRES_URL is set, then redeploy.'
+    );
+  }
   const { PGlite } = await import('@electric-sql/pglite');
   const db = await PGlite.create(join(HERE, '..', '.pglite'));
   const query = async (text, params = []) => (await db.query(text, params)).rows;
