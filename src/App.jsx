@@ -7,19 +7,18 @@ const USER_VOTES_STORE = 'hhon_user_votes_v1';
 const K_FACTOR = 32;
 const START_RATING = 1400;
 
-// HPD (nyc.gov/hpd) design system: black text, white background, teal accent.
-const brand = '#1c7a8c';
-const highlight = '#1c7a8c';
-const ink = '#111111';        // black as primary UI/heading color
-const green = '#1c7a8c';      // (alias) primary accent/buttons → teal
-const greenDeep = '#1c7a8c';  // (alias) accent text → teal
-const greenBright = '#1c7a8c';
-const line = '#e5e7eb';
-const gray = '#5b6470';
-const mint = 'linear-gradient(180deg,#f2f8f9 0%,#e4eff1 100%)';
-const serif = "'Barlow Semi Condensed','Arial Narrow',sans-serif";
-const sans = "'Barlow','Helvetica Neue',Helvetica,Arial,sans-serif";
-const cardShadow = '0 18px 44px -18px rgba(28,122,140,0.28)';
+// Editorial palette — NYT data-viz register: ink on white, no accent color.
+const ink = '#111';
+const gray = '#767676';
+const line = '#e0e0e0';
+const subtle = '#f9f9f9';
+const green = '#111';       // alias: primary interactive → ink
+const greenDeep = '#111';
+const highlight = '#111';
+const mint = '#fff';
+const serif = "Georgia,'Times New Roman',Times,serif";
+const sans = "'Helvetica Neue',Helvetica,Arial,sans-serif";
+const cardShadow = 'none';
 const typeLine = (n, t) => (t && t !== '—' ? n + '  ·  ' + t : n);
 
 // Source: NYC Open Data, "Affordable Housing Production by Building"
@@ -240,35 +239,35 @@ export default function App() {
   const right = pairR ? { address: pairR.address, neighborhood: pairR.neighborhood, type: pairR.type || '—', rating: Math.round(pairR.rating), photo: pairR.photo || '' } : null;
 
   const navItem = (active) => ({
-    background: active ? '#eaf6ee' : 'transparent', color: active ? ink : gray, border: 'none',
-    padding: '9px 16px', borderRadius: 999, fontSize: 13.5, letterSpacing: '0.01em',
-    cursor: 'pointer', fontWeight: active ? 600 : 500,
+    background: 'transparent', color: active ? ink : gray, border: 'none',
+    padding: '8px 14px', borderRadius: 4, fontSize: 13, letterSpacing: '0.02em',
+    cursor: 'pointer', fontWeight: active ? 700 : 400,
+    textDecoration: active ? 'underline' : 'none', textUnderlineOffset: 3,
   });
-  const greenBtn = { background: green, color: '#fff', border: 'none', padding: '13px 24px', borderRadius: 999, cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.01em' };
-  const softBtn = { background: '#fff', color: ink, border: `1.5px solid ${line}`, padding: '13px 24px', borderRadius: 999, cursor: 'pointer', fontSize: 14, fontWeight: 600, letterSpacing: '0.01em' };
-  const cardBox = { background: '#fff', border: `1px solid ${line}`, borderRadius: 20, boxShadow: '0 12px 30px -20px rgba(28,122,140,0.25)', overflow: 'hidden' };
-  const cardHead = { background: '#eaf4f5', borderBottom: `1px solid ${line}`, padding: '13px 18px', fontFamily: serif, fontSize: 16, fontWeight: 600, color: ink, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' };
-  const fieldStyle = { border: `1.5px solid ${line}`, padding: '11px 13px', fontSize: 14, background: '#fff', width: '100%', borderRadius: 12, color: ink };
+  const greenBtn = { background: ink, color: '#fff', border: 'none', padding: '11px 22px', borderRadius: 4, cursor: 'pointer', fontSize: 13, fontWeight: 600, letterSpacing: '0.02em' };
+  const softBtn = { background: '#fff', color: ink, border: `1px solid ${line}`, padding: '11px 22px', borderRadius: 4, cursor: 'pointer', fontSize: 13, fontWeight: 400 };
+  const cardBox = { background: '#fff', border: `1px solid ${line}`, borderRadius: 4, overflow: 'hidden' };
+  const cardHead = { background: subtle, borderBottom: `1px solid ${line}`, padding: '12px 18px', fontFamily: sans, fontSize: 13, fontWeight: 600, letterSpacing: '0.04em', textTransform: 'uppercase', color: gray, display: 'flex', justifyContent: 'space-between', alignItems: 'center', gap: 10, flexWrap: 'wrap' };
+  const fieldStyle = { border: `1px solid ${line}`, padding: '10px 12px', fontSize: 13, background: '#fff', width: '100%', borderRadius: 4, color: ink };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
-    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,48vh,400px)', cursor: 'pointer', background: mint, borderRadius: 26, boxShadow: cardShadow, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
-      <div style={{ position: 'relative', aspectRatio: '1 / 1', margin: '14px 16px 0', borderRadius: 18, overflow: 'hidden' }}>
+    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,48vh,400px)', cursor: 'pointer', background: '#fff', border: `1px solid ${line}`, borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+      <div style={{ position: 'relative', aspectRatio: '1 / 1', overflow: 'hidden' }}>
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
-        <div style={{ position: 'absolute', left: 12, bottom: 12, background: 'rgba(255,255,255,0.92)', color: greenDeep, padding: '5px 12px', borderRadius: 999, fontSize: 12, fontWeight: 700, letterSpacing: '0.04em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
+        <div style={{ position: 'absolute', left: 10, bottom: 10, background: 'rgba(255,255,255,0.88)', color: ink, padding: '3px 8px', borderRadius: 2, fontSize: 11, fontFamily: sans, fontWeight: 700, letterSpacing: '0.06em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
-          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(28,122,140,0.28)' }}>
-            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 28px', borderRadius: 20, textAlign: 'center', boxShadow: '0 16px 40px -10px rgba(28,122,140,0.4)' }}>
-              <div style={{ width: 38, height: 38, borderRadius: 999, background: green, color: '#fff', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: 20, margin: '0 auto 8px' }}>✓</div>
-              <div style={{ fontFamily: serif, fontSize: 30, fontWeight: 600, color: greenDeep }}>+{flashDelta}</div>
-              <div style={{ fontSize: 10, letterSpacing: '0.28em', color: gray, marginTop: 2 }}>ELO</div>
+          <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.18)' }}>
+            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 28px', borderRadius: 4, textAlign: 'center', border: `1px solid ${line}` }}>
+              <div style={{ fontFamily: serif, fontSize: 32, fontWeight: 700, color: ink }}>+{flashDelta}</div>
+              <div style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: gray, marginTop: 2 }}>ELO</div>
             </div>
           </div>
         )}
       </div>
-      <div style={{ padding: '14px 22px 20px', textAlign: 'center' }}>
-        <div style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 9px', borderRadius: 999, background: '#fff', color: greenDeep, fontSize: 12, fontWeight: 700, letterSpacing: '0.08em', marginBottom: 12, boxShadow: '0 2px 8px -2px rgba(28,122,140,0.25)' }}>{badge}</div>
-        <div style={{ fontFamily: serif, fontSize: 18, fontWeight: 600, color: ink, lineHeight: 1.18 }}>{b.address}</div>
-        <div style={{ fontSize: 12, color: gray, marginTop: 7, letterSpacing: '0.01em' }}>{typeLine(b.neighborhood, b.type)}</div>
+      <div style={{ padding: '12px 16px 16px', borderTop: `1px solid ${line}` }}>
+        <div style={{ fontSize: 11, fontFamily: sans, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', color: gray, marginBottom: 6 }}>{badge}</div>
+        <div style={{ fontFamily: serif, fontSize: 16, fontWeight: 400, color: ink, lineHeight: 1.3 }}>{b.address}</div>
+        <div style={{ fontSize: 11, color: gray, marginTop: 4, letterSpacing: '0.02em' }}>{typeLine(b.neighborhood, b.type)}</div>
       </div>
     </div>
   );
@@ -276,9 +275,9 @@ export default function App() {
   return (
     <div style={{ fontFamily: sans, fontVariantNumeric: 'tabular-nums', color: ink, background: '#fff', height: screen === 'vote' ? '100vh' : 'auto', minHeight: '100vh', overflow: screen === 'vote' ? 'hidden' : 'visible', display: 'flex', flexDirection: 'column' }}>
 
-      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', borderBottom: `1px solid ${line}`, padding: '14px 22px', flexWrap: 'wrap', gap: 10 }}>
-        <button onClick={() => setScreen('vote')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0, fontFamily: serif, fontSize: 21, fontWeight: 600, color: ink, letterSpacing: '-0.01em' }}>
-          Facade <span style={{ background: highlight, color: ink, padding: '0 6px', borderRadius: 6 }}>Off</span>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', borderBottom: `1px solid ${line}`, padding: '12px 22px', flexWrap: 'wrap', gap: 10 }}>
+        <button onClick={() => setScreen('vote')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0, fontFamily: serif, fontSize: 18, fontWeight: 700, color: ink, letterSpacing: '0em' }}>
+          Facade Off
         </button>
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
           <button onClick={() => setScreen('vote')} className="nav-link" style={navItem(screen === 'vote')}>Vote</button>
@@ -290,28 +289,27 @@ export default function App() {
 
       {screen === 'vote' && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, overflow: 'hidden' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '44px 20px 0', flex: 'none' }}>
-            <h1 style={{ fontFamily: serif, fontSize: 'clamp(24px,3.4vw,34px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0, lineHeight: 1.12, maxWidth: 680 }}>What does quality housing design look like to you?</h1>
-            <div style={{ fontSize: 14, color: gray, marginTop: 10, lineHeight: 1.55, whiteSpace: 'nowrap' }}>Compare two real affordable housing developments and choose the one you think is better designed.</div>
-            <span style={{ background: '#eaf4f5', color: greenDeep, padding: '5px 13px', borderRadius: 999, fontSize: 12, fontWeight: 600, letterSpacing: '0.02em', marginTop: 12 }}>{userVotes.toLocaleString()} votes you cast</span>
+          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '36px 20px 0', flex: 'none' }}>
+            <h1 style={{ fontFamily: serif, fontSize: 'clamp(22px,2.8vw,30px)', fontWeight: 400, color: ink, margin: 0, lineHeight: 1.2, maxWidth: 600, textWrap: 'balance' }}>Which building is better designed?</h1>
+            <div style={{ fontSize: 11, fontFamily: sans, color: gray, marginTop: 10, letterSpacing: '0.06em', textTransform: 'uppercase' }}>{userVotes.toLocaleString()} votes you cast</div>
           </div>
 
           {left && right ? (
-            <div style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '28px 32px 0', gap: 36 }}>
+            <div style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 32px 0', gap: 32 }}>
               <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 14, flex: 'none' }}>
-                <div style={{ width: 54, height: 54, flex: 'none', background: '#fff', color: greenDeep, borderRadius: 999, boxShadow: '0 10px 24px -8px rgba(28,122,140,0.3)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontFamily: serif, fontSize: 17, fontWeight: 600, zIndex: 3 }}>or</div>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 8, color: gray, fontSize: 13, fontWeight: 500, letterSpacing: '0.01em', whiteSpace: 'nowrap' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', minWidth: 26, height: 26, padding: '0 7px', borderRadius: 7, background: '#fff', border: `1.5px solid ${line}`, color: ink, fontSize: 12, fontWeight: 700, boxShadow: '0 1px 3px rgba(0,0,0,0.08)' }}>S</span>
-                  to skip
+              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, flex: 'none' }}>
+                <div style={{ fontFamily: serif, fontSize: 14, fontStyle: 'italic', color: gray }}>or</div>
+                <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: gray, fontSize: 11, letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
+                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 3, background: subtle, border: `1px solid ${line}`, color: ink, fontSize: 11, fontWeight: 700, fontFamily: sans }}>S</span>
+                  skip
                 </span>
               </div>
               <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
             </div>
           ) : (
-            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 60, textAlign: 'center', fontSize: 15, color: gray }}>Need at least two buildings — add some in Admin.</div>
+            <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 60, textAlign: 'center', fontSize: 14, color: gray }}>Need at least two buildings — add some in Admin.</div>
           )}
-          <div style={{ flex: 'none', padding: '18px 20px 0', textAlign: 'center', fontSize: 13, color: gray }}>{totalVotes.toLocaleString()} votes&nbsp;&nbsp;·&nbsp;&nbsp;{buildings.length} buildings</div>
+          <div style={{ flex: 'none', padding: '16px 20px 0', textAlign: 'center', fontSize: 11, fontFamily: sans, letterSpacing: '0.04em', color: gray }}>{buildings.length} buildings ranked</div>
         </div>
       )}
 
@@ -320,7 +318,7 @@ export default function App() {
           <h1 style={{ fontFamily: serif, fontSize: 'clamp(30px,4vw,42px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: 0 }}>Rankings</h1>
           <div style={{ fontSize: 15, color: gray, marginTop: 8, marginBottom: 26 }}>How the city's buildings stack up, by Elo rating.</div>
           <div style={cardBox}>
-            <div style={{ display: 'flex', background: '#eaf4f5', color: gray, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: `1px solid ${line}` }}>
+            <div style={{ display: 'flex', background: subtle, color: gray, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', borderBottom: `1px solid ${line}` }}>
               <span style={{ width: 52, padding: '14px 16px' }}>#</span>
               <span style={{ flex: 2, padding: '14px 16px' }}>Building</span>
               <span style={{ flex: 1.5, padding: '14px 16px' }}>Neighborhood</span>
@@ -330,7 +328,7 @@ export default function App() {
             </div>
             {sorted.map((b, i) => (
               <div key={b.id} onClick={() => { setDetailId(b.id); setScreen('detail'); }} className="rank-row" style={{ display: 'flex', borderBottom: i === sorted.length - 1 ? 'none' : `1px solid ${line}`, fontSize: 14, cursor: 'pointer', alignItems: 'center' }}>
-                <span style={{ width: 52, padding: '15px 16px', fontFamily: serif, fontWeight: 600, fontSize: 16, color: i < 3 ? greenDeep : ink }}>{i + 1}</span>
+                <span style={{ width: 52, padding: '15px 16px', fontFamily: serif, fontWeight: 600, fontSize: 16, color: ink }}>{i + 1}</span>
                 <span style={{ flex: 2, padding: '15px 16px', fontWeight: 500 }}>{b.address}</span>
                 <span style={{ flex: 1.5, padding: '15px 16px', fontSize: 13, color: gray }}>{b.neighborhood}</span>
                 <span style={{ width: 140, padding: '15px 16px', fontSize: 12, color: gray }}>{b.type || '—'}</span>
@@ -351,7 +349,7 @@ export default function App() {
                 <Photo photo={detailView.photo} style={{ position: 'absolute', inset: 0 }} />
               </div>
               <div style={{ flex: 1, minWidth: 280, padding: 30 }}>
-                <div style={{ fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: greenDeep, fontWeight: 600 }}>Rank #{detailView.rank} of {buildings.length}</div>
+                <div style={{ fontSize: 12, letterSpacing: '0.06em', textTransform: 'uppercase', color: ink, fontWeight: 600 }}>Rank #{detailView.rank} of {buildings.length}</div>
                 <div style={{ fontFamily: serif, fontSize: 28, fontWeight: 600, margin: '8px 0 6px', lineHeight: 1.18, color: ink }}>{detailView.address}</div>
                 <div style={{ fontSize: 14, color: gray }}>{typeLine(detailView.neighborhood, detailView.type)}</div>
                 <div style={{ fontFamily: serif, fontSize: 70, fontWeight: 600, margin: '22px 0 0', letterSpacing: '-0.03em', color: green, lineHeight: 1 }}>{detailView.rating}</div>
@@ -450,7 +448,7 @@ export default function App() {
                 <span style={{ flex: 1.4, padding: '13px 16px', fontSize: 12.5, color: gray }}>{b.neighborhood}</span>
                 <span style={{ width: 130, padding: '13px 16px', fontSize: 12, color: gray }}>{b.type || '—'}</span>
                 <span style={{ width: 60, padding: '13px 16px', textAlign: 'right', fontFamily: serif, fontWeight: 600 }}>{Math.round(b.rating)}</span>
-                <button onClick={() => editBuilding(b)} className="nav-link" style={{ background: 'transparent', color: greenDeep, border: 'none', padding: '13px 12px', cursor: 'pointer', fontSize: 12.5, fontWeight: 600, borderRadius: 8 }}>Edit</button>
+                <button onClick={() => editBuilding(b)} className="nav-link" style={{ background: 'transparent', color: ink, border: 'none', padding: '13px 12px', cursor: 'pointer', fontSize: 12.5, fontWeight: 600, borderRadius: 8 }}>Edit</button>
                 <button onClick={() => deleteBuilding(b.id)} className="nav-link" style={{ background: 'transparent', color: '#b04a3a', border: 'none', padding: '13px 14px', cursor: 'pointer', fontSize: 12.5, fontWeight: 600, borderRadius: 8 }}>Delete</button>
               </div>
             ))}

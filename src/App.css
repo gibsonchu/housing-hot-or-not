@@ -1,31 +1,31 @@
 * { box-sizing: border-box; }
 html, body, #root { margin: 0; padding: 0; background: #fff; height: 100%; }
 button { font-family: inherit; }
-input, textarea { font-family: 'Barlow', 'Helvetica Neue', Helvetica, Arial, sans-serif; }
-::placeholder { color: #a9a9a9; letter-spacing: 0; }
+input, textarea { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
+::placeholder { color: #b0b0b0; letter-spacing: 0; }
 
 @keyframes hhonPop {
-  0% { transform: scale(0.55); opacity: 0; }
+  0% { transform: scale(0.7); opacity: 0; }
   60% { opacity: 1; }
   100% { transform: scale(1); opacity: 1; }
 }
-.pop { animation: hhonPop 0.45s cubic-bezier(.2,1.5,.3,1) both; }
+.pop { animation: hhonPop 0.35s cubic-bezier(.2,1.4,.3,1) both; }
 
-.nav-link { transition: background 0.15s ease, color 0.15s ease; }
-.nav-link:hover { background: #eaf4f5; color: #1c7a8c; }
+.nav-link { transition: color 0.1s ease; }
+.nav-link:hover { color: #111; }
 
-.vote-card { transition: transform 0.18s ease, box-shadow 0.18s ease; }
-.vote-card:hover { transform: translateY(-4px); box-shadow: 0 28px 54px -18px rgba(28,122,140,0.34); }
+.vote-card { transition: transform 0.15s ease; }
+.vote-card:hover { transform: translateY(-2px); }
 
-.rank-row { transition: background 0.12s ease; }
-.rank-row:hover { background: #eaf4f5; }
+.rank-row { transition: background 0.1s ease; }
+.rank-row:hover { background: #f9f9f9; }
 
-.btn-green { transition: filter 0.15s ease, transform 0.15s ease; }
-.btn-green:hover { filter: brightness(1.18); }
+.btn-green { transition: opacity 0.1s ease; }
+.btn-green:hover { opacity: 0.8; }
 .btn-green:active { transform: translateY(1px); }
 
-.btn-soft { transition: background 0.15s ease, border-color 0.15s ease; }
-.btn-soft:hover { background: #eaf4f5; }
+.btn-soft { transition: background 0.1s ease; }
+.btn-soft:hover { background: #f9f9f9; }
 
-.field { transition: border-color 0.15s ease, box-shadow 0.15s ease; }
-.field:focus { outline: none; border-color: #1c7a8c; box-shadow: 0 0 0 3px rgba(28,122,140,0.16); }
+.field { transition: border-color 0.1s ease; }
+.field:focus { outline: none; border-color: #111; box-shadow: none; }
