@@ -1,5 +1,7 @@
 # Building Taste
 
+Live at **[building-taste-nyc.vercel.app](https://building-taste-nyc.vercel.app)** — `building-taste.vercel.app` belongs to an unrelated project. The former `facade-off.vercel.app` still resolves to the same deployment.
+
 A head-to-head voting game for real, recently completed NYC affordable housing buildings. Two buildings appear side by side; you pick the better-designed one and each gains/loses an Elo rating, the same system used to rank chess players. Every fifth vote asks one short survey question about *why*.
 
 Built as a companion piece to an NYU Wagner capstone study, *Design Quality in Affordable Housing*, which found that residents are rarely given the design vocabulary or the opportunity to weigh in before a building's design is finalized. This site is a small, public way to practice that vocabulary.
