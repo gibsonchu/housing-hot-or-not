@@ -1,9 +1,5 @@
 {
   "rewrites": [
-    {
-      "comment": "SPA fallback for client routes like /admin — must not shadow the API.",
-      "source": "/((?!api/).*)",
-      "destination": "/index.html"
-    }
+    { "source": "/((?!api/).*)", "destination": "/index.html" }
   ]
 }
