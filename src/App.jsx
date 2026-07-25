@@ -1,11 +1,19 @@
 import { useEffect, useRef, useState } from 'react';
 import Photo from './Photo';
+import SurveyModal from './SurveyModal';
+import Insights from './Insights';
+import Profile from './Profile';
+import { NEIGHBORHOOD_QUESTION, pickQuestion } from './surveyBank';
+import { loadSurvey, recordAnswer, saveSurvey } from './surveyStore';
 import './App.css';
 
 const STORE = 'hhon_nyc_v2';
 const USER_VOTES_STORE = 'hhon_user_votes_v1';
 const K_FACTOR = 32;
 const START_RATING = 1400;
+const PROFILE_AT = 50;       // votes needed to unlock the design profile
+const PROFILE_TEASE_AT = 5;  // votes before we start showing the countdown
+const SURVEY_EVERY = 5;      // ask a survey question this often
 
 // Editorial palette — NYT data-viz register: ink on white, no accent color.
 const ink = '#111';
@@ -20,6 +28,10 @@ const serif = "Georgia,'Times New Roman',Times,serif";
 const sans = "'Helvetica Neue',Helvetica,Arial,sans-serif";
 const cardShadow = 'none';
 const typeLine = (n, t) => (t && t !== '—' ? n + '  ·  ' + t : n);
+
+const aboutH2 = { fontFamily: serif, fontSize: 22, fontWeight: 600, margin: '38px 0 12px', color: ink, lineHeight: 1.25 };
+const aboutP = { margin: '0 0 18px' };
+const aboutUl = { margin: '0 0 18px', paddingLeft: 22, display: 'flex', flexDirection: 'column', gap: 6 };
 
 // Source: NYC Open Data, "Affordable Housing Production by Building"
 // https://data.cityofnewyork.us/Housing-Development/Affordable-Housing-Production-by-Building/hg8x-zxpr
@@ -63,8 +75,18 @@ function expected(a, b) { return 1 / (1 + Math.pow(10, (b - a) / 400)); }
 
 const emptyForm = { address: '', neighborhood: '', type: '', photo: '' };
 
+const ADMIN_PASSWORD = 'vercel2020';
+const ADMIN_UNLOCK = 'hhon_admin_unlocked';
+
 export default function App() {
-  const [screen, setScreen] = useState('vote');
+  // Admin lives at /admin only — it is not in the nav.
+  const [screen, setScreen] = useState(() =>
+    (typeof location !== 'undefined' && location.pathname.replace(/\/+$/, '') === '/admin') ? 'admin' : 'vote');
+  const [adminOk, setAdminOk] = useState(() => {
+    try { return sessionStorage.getItem(ADMIN_UNLOCK) === '1'; } catch (e) { return false; }
+  });
+  const [adminPw, setAdminPw] = useState('');
+  const [adminErr, setAdminErr] = useState(false);
   const [buildings, setBuildings] = useState([]);
   const [pair, setPair] = useState(null);
   const [flash, setFlash] = useState(null);
@@ -78,6 +100,9 @@ export default function App() {
     const n = parseInt(localStorage.getItem(USER_VOTES_STORE), 10);
     return Number.isFinite(n) ? n : 0;
   });
+  const [flashAgree, setFlashAgree] = useState(null);
+  const [survey, setSurvey] = useState(loadSurvey);
+  const [activeQ, setActiveQ] = useState(null);
 
   const buildingsRef = useRef(buildings);
   buildingsRef.current = buildings;
@@ -87,6 +112,49 @@ export default function App() {
   flashRef.current = flash;
   const screenRef = useRef(screen);
   screenRef.current = screen;
+  const surveyRef = useRef(survey);
+  surveyRef.current = survey;
+  const activeQRef = useRef(activeQ);
+  activeQRef.current = activeQ;
+  const lastPairRef = useRef(null);   // the two buildings just voted on
+
+  /**
+   * Choose the next survey question. Every second survey is the neighborhood
+   * question, so answers stay segmentable by where people live; the rest are
+   * drawn from the bank weighted by each question's stated frequency.
+   */
+  function openSurvey() {
+    const s = surveyRef.current;
+    const nth = s.asked + 1;
+    let q;
+    if (nth % 2 === 0) {
+      q = NEIGHBORHOOD_QUESTION;
+    } else {
+      // Don't repeat a question until the bank has been worked through a bit.
+      const recent = s.responses.slice(-8).map((r) => r.qid);
+      q = pickQuestion(recent);
+      if (q.pair) {
+        const [a, b] = lastPairRef.current || [];
+        if (!a || !b) q = pickQuestion(recent.concat(q.id));
+        else q = { ...q, options: [a.address, b.address] };
+      }
+    }
+    const next = { ...s, asked: nth };
+    surveyRef.current = next;
+    setSurvey(next);
+    saveSurvey(next);
+    setActiveQ(q);
+  }
+
+  function answerSurvey(answer) {
+    const q = activeQRef.current;
+    if (!q) return;
+    const next = recordAnswer(surveyRef.current, q, answer);
+    surveyRef.current = next;
+    setSurvey(next);
+    saveSurvey(next);
+    setActiveQ(null);
+  }
 
   function newPair(list) {
     const bs = list || buildingsRef.current;
@@ -100,11 +168,16 @@ export default function App() {
   function vote(idx) {
     const bs = buildingsRef.current;
     const pr = pairRef.current;
-    if (!pr || flashRef.current) return;
+    if (!pr || flashRef.current || activeQRef.current) return;
     const winner = bs.find((b) => b.id === pr[idx]);
     const loser = bs.find((b) => b.id === pr[1 - idx]);
     if (!winner || !loser) return;
-    const delta = Math.max(1, Math.round(K_FACTOR * (1 - expected(winner.rating, loser.rating))));
+    const p = expected(winner.rating, loser.rating);
+    const delta = Math.max(1, Math.round(K_FACTOR * (1 - p)));
+    // Elo's expected score is exactly the share of voters predicted to make the
+    // same pick, so it doubles as an "you agreed with X%" readout.
+    const agree = Math.min(99, Math.max(1, Math.round(p * 100)));
+    lastPairRef.current = [winner, loser];
     const next = bs.map((b) => {
       if (b.id === winner.id) return { ...b, rating: b.rating + delta, wins: b.wins + 1 };
       if (b.id === loser.id) return { ...b, rating: b.rating - delta, losses: b.losses + 1 };
@@ -114,12 +187,17 @@ export default function App() {
     setBuildings(next);
     setFlash(idx === 0 ? 'left' : 'right');
     setFlashDelta(delta);
+    setFlashAgree(agree);
+    let cast = 0;
     setUserVotes((n) => {
-      const nv = n + 1;
-      try { localStorage.setItem(USER_VOTES_STORE, String(nv)); } catch (e) {}
-      return nv;
+      cast = n + 1;
+      try { localStorage.setItem(USER_VOTES_STORE, String(cast)); } catch (e) {}
+      return cast;
     });
-    setTimeout(() => newPair(next), 950);
+    setTimeout(() => {
+      newPair(next);
+      if (cast > 0 && cast % SURVEY_EVERY === 0) openSurvey();
+    }, 1150);
   }
 
   useEffect(() => {
@@ -131,7 +209,7 @@ export default function App() {
     newPair(data);
 
     const onKey = (e) => {
-      if (screenRef.current !== 'vote' || flashRef.current || !pairRef.current) return;
+      if (screenRef.current !== 'vote' || flashRef.current || !pairRef.current || activeQRef.current) return;
       const k = (e.key || '').toLowerCase();
       if (e.key === 'ArrowLeft' || k === 'a') { e.preventDefault(); vote(0); }
       else if (e.key === 'ArrowRight' || k === 'd') { e.preventDefault(); vote(1); }
@@ -140,6 +218,13 @@ export default function App() {
     window.addEventListener('keydown', onKey);
     return () => window.removeEventListener('keydown', onKey);
   }, []);
+
+  // Keep the URL in step with the hidden admin route.
+  useEffect(() => {
+    const path = location.pathname.replace(/\/+$/, '');
+    if (screen === 'admin' && path !== '/admin') history.replaceState(null, '', '/admin');
+    else if (screen !== 'admin' && path === '/admin') history.replaceState(null, '', '/');
+  }, [screen]);
 
   function setFormField(k, v) { setForm((s) => ({ ...s, [k]: v })); }
 
@@ -257,9 +342,14 @@ export default function App() {
         <div style={{ position: 'absolute', left: 10, bottom: 10, background: 'rgba(255,255,255,0.88)', color: ink, padding: '3px 8px', borderRadius: 2, fontSize: 11, fontFamily: sans, fontWeight: 700, letterSpacing: '0.06em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.18)' }}>
-            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 28px', borderRadius: 4, textAlign: 'center', border: `1px solid ${line}` }}>
+            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 24px', borderRadius: 4, textAlign: 'center', border: `1px solid ${line}`, maxWidth: '86%' }}>
               <div style={{ fontFamily: serif, fontSize: 32, fontWeight: 700, color: ink }}>+{flashDelta}</div>
               <div style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: gray, marginTop: 2 }}>ELO</div>
+              {flashAgree != null && (
+                <div style={{ fontSize: 12, color: gray, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${line}`, lineHeight: 1.4 }}>
+                  You agreed with <b style={{ color: ink, fontWeight: 700 }}>{flashAgree}%</b> of voters.
+                </div>
+              )}
             </div>
           </div>
         )}
@@ -282,8 +372,8 @@ export default function App() {
         <div style={{ display: 'flex', gap: 4, flexWrap: 'wrap' }}>
           <button onClick={() => setScreen('vote')} className="nav-link" style={navItem(screen === 'vote')}>Vote</button>
           <button onClick={() => setScreen('rank')} className="nav-link" style={navItem(screen === 'rank' || screen === 'detail')}>Rankings</button>
+          <button onClick={() => setScreen('insights')} className="nav-link" style={navItem(screen === 'insights')}>Insights</button>
           <button onClick={() => setScreen('about')} className="nav-link" style={navItem(screen === 'about')}>About</button>
-          <button onClick={() => setScreen('admin')} className="nav-link" style={navItem(screen === 'admin')}>Admin</button>
         </div>
       </div>
 
@@ -309,8 +399,25 @@ export default function App() {
           ) : (
             <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 60, textAlign: 'center', fontSize: 14, color: gray }}>Need at least two buildings — add some in Admin.</div>
           )}
-          <div style={{ flex: 'none', padding: '16px 20px 0', textAlign: 'center', fontSize: 11, fontFamily: sans, letterSpacing: '0.04em', color: gray }}>{totalVotes.toLocaleString()} total votes&nbsp;&nbsp;·&nbsp;&nbsp;{userVotes.toLocaleString()} votes you cast</div>
+          <div style={{ flex: 'none', padding: '16px 20px 0', textAlign: 'center', fontSize: 11, fontFamily: sans, letterSpacing: '0.04em', color: gray, display: 'flex', flexDirection: 'column', gap: 6 }}>
+            <div>{totalVotes.toLocaleString()} total votes&nbsp;&nbsp;·&nbsp;&nbsp;{userVotes.toLocaleString()} votes you cast</div>
+            {userVotes >= PROFILE_AT ? (
+              <button onClick={() => setScreen('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: ink, fontSize: 11, fontFamily: sans, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'underline', textUnderlineOffset: 3, padding: 0 }}>
+                Design Profile
+              </button>
+            ) : userVotes >= PROFILE_TEASE_AT ? (
+              <div>{PROFILE_AT - userVotes} votes until your design profile is unlocked.</div>
+            ) : null}
+          </div>
         </div>
+      )}
+
+      {screen === 'insights' && (
+        <Insights survey={survey} buildings={buildings} totalVotes={totalVotes} />
+      )}
+
+      {screen === 'profile' && (
+        <Profile survey={survey} userVotes={userVotes} onBack={() => setScreen('vote')} />
       )}
 
       {screen === 'rank' && (
@@ -375,27 +482,79 @@ export default function App() {
       )}
 
       {screen === 'about' && (
-        <div style={{ flex: 1, padding: '52px 28px', maxWidth: 720, margin: '0 auto', width: '100%', fontSize: 16, lineHeight: 1.75, color: '#384740' }}>
-          <h1 style={{ fontFamily: serif, fontSize: 'clamp(32px,4.4vw,44px)', fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 6px', lineHeight: 1.12, color: ink }}>What will all this housing actually look like?</h1>
-          <div style={{ fontFamily: serif, fontSize: 18, color: green, fontWeight: 500, marginBottom: 30 }}>A design-literacy tool, not a popularity contest.</div>
-          <p style={{ margin: '0 0 20px' }}>New York City is in the middle of its most ambitious housing push in a generation — but the conversation about <b style={{ color: ink }}>how many</b> units to build has crowded out the question of what those units will actually look like. Residents consistently describe new affordable housing as <b style={{ color: ink }}>blocky and cheap</b>, and yet they are rarely given the chance to weigh in before a design is already locked in.</p>
-          <p style={{ margin: '0 0 20px' }}>This site is a companion to an NYU Wagner capstone study on design quality in affordable housing. Two real, recently built NYC buildings show up side by side. One blunt question: <b style={{ color: ink }}>which one is the better-designed building?</b> Every vote is a small act of practicing design literacy — the same vocabulary the report argues communities need but are rarely given.</p>
-          <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 600, margin: '36px 0 10px', color: ink }}>Why this matters</h2>
-          <p style={{ margin: '0 0 20px' }}>Our research found that design decisions are typically finalized long before communities get a formal say, that good design is shaped by neighborhood context, that design quality is mostly a matter of professional culture rather than cost, and that 98% of residents surveyed want to participate in design — but lack the language to do it. A Common Design Vocabulary is one of our core recommendations. This game is a small, public version of that idea: practice naming what works and what doesn't.</p>
-          <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 600, margin: '36px 0 10px', color: ink }}>The math</h2>
-          <p style={{ margin: '0 0 20px' }}>Every building carries an <b style={{ color: ink }}>Elo rating</b>, the same system used to rank chess players. Beat a higher-rated building and you gain a lot; beat a weaker one and you gain a little. The swing is set by a K-factor (default 32, tweakable). Ratings are zero-sum: the winner takes exactly what the loser gives up.</p>
-          <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 600, margin: '36px 0 10px', color: ink }}>The rules</h2>
-          <p style={{ margin: '0 0 20px' }}>Click a building, or use the <b style={{ color: ink }}>← / →</b> arrow keys, to cast your vote. Check the rankings to see how the city's buildings stack up.</p>
-          <h2 style={{ fontFamily: serif, fontSize: 22, fontWeight: 600, margin: '36px 0 10px', color: ink }}>The data</h2>
-          <p style={{ margin: '0 0 28px' }}>Seeded with real, recently completed affordable housing buildings from NYC's open <b style={{ color: ink }}>Affordable Housing Production by Building</b> dataset, spanning all five boroughs. Everything lives in your browser. Add buildings, paste a whole spreadsheet, or export the current set as TSV from the <b style={{ color: ink }}>Admin</b> panel — ready for the day real building photos drop in.</p>
+        <div style={{ flex: 1, padding: '52px 28px', maxWidth: 720, margin: '0 auto', width: '100%', fontSize: 16, lineHeight: 1.75, color: '#3a3a3a' }}>
+          <h1 style={{ fontFamily: serif, fontSize: 'clamp(32px,4.4vw,44px)', fontWeight: 600, letterSpacing: '-0.02em', margin: '0 0 28px', lineHeight: 1.12, color: ink }}>About</h1>
+
+          <h2 style={aboutH2}>What is this tool?</h2>
+          <p style={aboutP}>Affordable housing discussions usually focus on how much housing we build. And while in NYC, we need to be building a lot more housing, there&rsquo;s much less attention paid to what quality housing design.</p>
+          <p style={aboutP}>Residents consistently describe new affordable housing as blocky and cheap, and yet they are rarely given the chance to weigh in before a design is already locked in.</p>
+          <p style={aboutP}>This project is an experiment in understanding public preferences for residential architecture, as it reflects both how its perceived in a neighborhood and a function of how long it may last. By comparing two buildings at a time, visitors help create a ranking of designs that people find attractive, contextual, and welcoming.</p>
+          <p style={aboutP}>Rather than asking broad questions like &ldquo;Do you like affordable housing?&rdquo;, we&rsquo;re asking a simpler one: Which building would you rather see in your neighborhood?</p>
+
+          <h2 style={aboutH2}>Why does this matter?</h2>
+          <p style={aboutP}>Most community engagement happens after major design decisions have already been made. At that point, conversations often become polarized because people struggle to explain why they dislike a proposal.</p>
+          <p style={aboutP}>This project explores whether a lightweight, visual interface can help surface design preferences before those conversations happen.</p>
+          <p style={aboutP}>The goal isn&rsquo;t to determine what &ldquo;good architecture&rdquo; is. It&rsquo;s to understand patterns in what communities value.</p>
+
+          <h2 style={aboutH2}>How does it work?</h2>
+          <ul style={aboutUl}>
+            <li>Every round presents two buildings.</li>
+            <li>Pick the one you prefer.</li>
+            <li>Rankings are calculated using an Elo rating system (similar to chess ratings).</li>
+            <li>Over thousands of comparisons, a community-generated ranking begins to emerge.</li>
+          </ul>
+          <p style={aboutP}>The more people participate, the more reliable the rankings become.</p>
+
+          <h2 style={aboutH2}>What happens with the data?</h2>
+          <p style={aboutP}>The results will help researchers, architects, planners, and developers better understand:</p>
+          <ul style={aboutUl}>
+            <li>preferred building materials</li>
+            <li>preferred building massing</li>
+            <li>neighborhood context</li>
+            <li>facade articulation</li>
+            <li>height preferences</li>
+            <li>recurring design patterns</li>
+          </ul>
+          <p style={{ ...aboutP, marginBottom: 32 }}>Ultimately, the goal is to build better conversations around quality housing design, as we should strive to build buildings that will last and be beautiful for at least the next 100 years.</p>
+
           <div style={{ display: 'flex', gap: 12, flexWrap: 'wrap' }}>
             <button onClick={() => setScreen('vote')} className="btn-green" style={greenBtn}>Start voting →</button>
-            <button onClick={() => setScreen('admin')} className="btn-soft" style={softBtn}>Open Admin</button>
+            <button onClick={() => setScreen('insights')} className="btn-soft" style={softBtn}>See the insights</button>
           </div>
         </div>
       )}
 
-      {screen === 'admin' && (
+      {screen === 'admin' && !adminOk && (
+        <div style={{ flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '60px 28px' }}>
+          <form
+            onSubmit={(e) => {
+              e.preventDefault();
+              if (adminPw === ADMIN_PASSWORD) {
+                setAdminOk(true);
+                setAdminErr(false);
+                try { sessionStorage.setItem(ADMIN_UNLOCK, '1'); } catch (err) {}
+              } else {
+                setAdminErr(true);
+              }
+              setAdminPw('');
+            }}
+            style={{ ...cardBox, width: 'min(380px,100%)', padding: 28 }}
+          >
+            <div style={{ fontSize: 11, letterSpacing: '0.14em', textTransform: 'uppercase', color: gray }}>Restricted</div>
+            <div style={{ fontFamily: serif, fontSize: 24, fontWeight: 600, color: ink, margin: '8px 0 18px' }}>Admin</div>
+            <input
+              className="field" type="password" autoFocus value={adminPw}
+              onChange={(e) => { setAdminPw(e.target.value); setAdminErr(false); }}
+              placeholder="Password" style={fieldStyle}
+            />
+            {adminErr && <div style={{ fontSize: 12.5, color: '#b04a3a', marginTop: 10 }}>Wrong password.</div>}
+            <button type="submit" className="btn-green" style={{ ...greenBtn, width: '100%', marginTop: 16 }}>Unlock</button>
+            <button type="button" onClick={() => setScreen('vote')} className="nav-link" style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: gray, fontSize: 12.5, marginTop: 14, padding: 0 }}>&larr; Back to voting</button>
+          </form>
+        </div>
+      )}
+
+      {screen === 'admin' && adminOk && (
         <div style={{ flex: 1, padding: '40px 28px', maxWidth: 1000, margin: '0 auto', width: '100%', display: 'flex', flexDirection: 'column', gap: 22 }}>
           <h1 style={{ fontFamily: serif, fontSize: 'clamp(30px,4vw,42px)', fontWeight: 600, letterSpacing: '-0.02em', color: ink, margin: '0 0 4px' }}>Admin</h1>
 
@@ -465,6 +624,15 @@ export default function App() {
           </div>
 
         </div>
+      )}
+
+      {activeQ && (
+        <SurveyModal
+          question={activeQ}
+          initialValue={activeQ.type === 'Neighborhood' ? survey.neighborhood : ''}
+          onAnswer={answerSurvey}
+          onClose={() => setActiveQ(null)}
+        />
       )}
 
     </div>
