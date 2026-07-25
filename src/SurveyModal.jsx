@@ -43,14 +43,12 @@ export default function SurveyModal({ question, initialValue, onAnswer, onClose 
 
   return (
     <div
-      onClick={onClose}
       style={{
         position: 'fixed', inset: 0, zIndex: 100, background: 'rgba(17,17,17,0.32)',
         display: 'flex', alignItems: 'center', justifyContent: 'center', padding: 20,
       }}
     >
       <div
-        onClick={(e) => e.stopPropagation()}
         className="pop"
         role="dialog"
         aria-modal="true"
@@ -137,7 +135,7 @@ export default function SurveyModal({ question, initialValue, onAnswer, onClose 
         </div>
 
         <div style={{ borderTop: `1px solid ${line}`, padding: '10px 22px', fontSize: 11, color: gray, letterSpacing: '0.03em' }}>
-          Click outside or press Esc to skip.
+          Press Esc, or close with &times;, to skip this one.
         </div>
       </div>
     </div>

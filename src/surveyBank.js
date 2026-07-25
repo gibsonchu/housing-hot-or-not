@@ -107,10 +107,13 @@ export const NEIGHBORHOOD_QUESTION = {
   options: [],
 };
 
-/** Weighted random pick, skipping ids in `exclude`. */
+/**
+ * Weighted random pick from the questions not yet in `exclude`. Returns null
+ * once the bank is exhausted — every question is asked at most once.
+ */
 export function pickQuestion(exclude = []) {
-  const pool = QUESTIONS.filter((q) => exclude.indexOf(q.id) === -1);
-  const list = pool.length ? pool : QUESTIONS;
+  const list = QUESTIONS.filter((q) => exclude.indexOf(q.id) === -1);
+  if (!list.length) return null;
   const total = list.reduce((a, q) => a + q.weight, 0);
   let r = Math.random() * total;
   for (const q of list) {

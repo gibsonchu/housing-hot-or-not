@@ -119,26 +119,26 @@ export default function App() {
   const lastPairRef = useRef(null);   // the two buildings just voted on
 
   /**
-   * Choose the next survey question. Every second survey is the neighborhood
-   * question, so answers stay segmentable by where people live; the rest are
-   * drawn from the bank weighted by each question's stated frequency.
+   * Choose the next survey question. Every second survey asks where the voter
+   * lives — until they answer, after which the slot goes back to the bank.
+   * Nothing is ever asked twice; once the bank runs dry, no modal opens.
    */
   function openSurvey() {
     const s = surveyRef.current;
     const nth = s.asked + 1;
-    let q;
-    if (nth % 2 === 0) {
+    let q = null;
+    if (nth % 2 === 0 && !s.neighborhood) {
       q = NEIGHBORHOOD_QUESTION;
     } else {
-      // Don't repeat a question until the bank has been worked through a bit.
-      const recent = s.responses.slice(-8).map((r) => r.qid);
-      q = pickQuestion(recent);
-      if (q.pair) {
+      const answered = s.responses.map((r) => r.qid);
+      q = pickQuestion(answered);
+      if (q && q.pair) {
         const [a, b] = lastPairRef.current || [];
-        if (!a || !b) q = pickQuestion(recent.concat(q.id));
+        if (!a || !b) q = pickQuestion(answered.concat(q.id));
         else q = { ...q, options: [a.address, b.address] };
       }
     }
+    if (!q) return;
     const next = { ...s, asked: nth };
     surveyRef.current = next;
     setSurvey(next);
