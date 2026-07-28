@@ -17,6 +17,17 @@ npm run dev
 
 `npm run dev` serves the `api/` handlers through a Vite middleware, so the full app works locally. With no `POSTGRES_URL` set it runs against [PGlite](https://pglite.dev) — real Postgres compiled to WASM, persisted in `.pglite/` — so no database install is needed to develop. Delete that directory to start from a clean slate.
 
+### Test data
+
+Eight obviously-fake buildings, each with its own generated placeholder image, for exercising voting, rankings, and insights without polluting the real set:
+
+```bash
+node scripts/test-buildings.mjs
+node scripts/test-buildings.mjs --remove
+```
+
+Every address starts with `Test Building`, which is what `--remove` matches on. Point it at another environment with `BASE` and `ADMIN_PASSWORD`.
+
 ## Deployment
 
 Auto-deploys to Vercel on push to `main`. Two environment variables:
