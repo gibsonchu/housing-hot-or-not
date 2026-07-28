@@ -61,10 +61,15 @@ export default async function handler(req, res) {
       return json(res, 200, { deleted: body.id });
     }
 
+    // Clears every trace of participation so a real study can start from zero.
+    // Survey answers go too — leaving them would strand answer counts on the
+    // Insights page with no votes or option ratings behind them.
     if (action === 'resetElo') {
       await client.query('update buildings set rating = $1, wins = 0, losses = 0', [START_RATING]);
       await client.query('delete from votes');
       await client.query('delete from option_ratings');
+      await client.query('delete from survey_answers');
+      await client.query('update voters set neighborhood = null');
       return json(res, 200, { reset: true });
     }
 

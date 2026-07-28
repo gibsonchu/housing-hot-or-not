@@ -564,7 +564,7 @@ export default function App() {
           <div style={cardBox}>
             <div style={cardHead}>
               <span>Buildings ({buildings.length})</span>
-              <button onClick={resetElo} disabled={adminBusy} className="btn-soft" style={pillBtn}>Reset Elo &amp; clear votes</button>
+              <button onClick={resetElo} disabled={adminBusy} className="btn-soft" style={pillBtn}>Reset Elo &amp; clear all activity</button>
             </div>
             {buildings.map((b, i) => (
               <div key={b.id} style={{ display: 'flex', alignItems: 'center', borderBottom: i === buildings.length - 1 ? 'none' : `1px solid ${line}`, fontSize: 14, gap: 6 }}>
