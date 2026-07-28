@@ -22,11 +22,24 @@ npm run dev
 Eight obviously-fake buildings, each with its own generated placeholder image, for exercising voting, rankings, and insights without polluting the real set:
 
 ```bash
-node scripts/test-buildings.mjs
-node scripts/test-buildings.mjs --remove
+npm run test-data          # add them locally
+npm run test-data:remove   # take them back out
 ```
 
-Every address starts with `Test Building`, which is what `--remove` matches on. Point it at another environment with `BASE` and `ADMIN_PASSWORD`.
+Every address starts with `Test Building`, which is what the remove step matches on — the real seeded buildings are never touched. Re-running the add when they already exist is a no-op rather than a duplicate.
+
+### Sharing a test with someone else
+
+The deployed site is a normal multi-user app: anyone with the link can vote, and everyone's votes land in the same database. There is no login — each browser gets an anonymous UUID, so a friend on their own machine is simply a second voter.
+
+Once the database is attached (see Deployment below), put the test buildings on the live site and send the link:
+
+```bash
+npm run test-data:live
+npm run test-data:live:remove   # clean up afterwards
+```
+
+Both commands need `ADMIN_PASSWORD` in the environment if the deployment has one set. Clear the test buildings before showing the site to real participants — otherwise the fakes end up in the public rankings and insights.
 
 ## Deployment
 

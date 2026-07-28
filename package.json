@@ -7,7 +7,11 @@
     "dev": "vite",
     "build": "vite build",
     "lint": "oxlint",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "test-data": "node scripts/test-buildings.mjs",
+    "test-data:remove": "node scripts/test-buildings.mjs --remove",
+    "test-data:live": "BASE=https://building-taste-nyc.vercel.app node scripts/test-buildings.mjs",
+    "test-data:live:remove": "BASE=https://building-taste-nyc.vercel.app node scripts/test-buildings.mjs --remove"
   },
   "dependencies": {
     "postgres": "^3.4.9",

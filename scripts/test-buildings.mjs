@@ -68,7 +68,22 @@ async function call(method, body) {
 async function main() {
   console.log(`${REMOVE ? 'Removing' : 'Adding'} test buildings at ${BASE}`);
 
-  const { buildings: existing } = await call('GET');
+  let existing;
+  try {
+    ({ buildings: existing } = await call('GET'));
+  } catch (e) {
+    if (/No database configured/.test(e.message)) {
+      throw new Error(
+        'that deployment has no database yet.\n' +
+        '  Vercel dashboard → the project → Storage → Create Database → Postgres,\n' +
+        '  connect it to the project, redeploy, then run this again.'
+      );
+    }
+    if (/^401/.test(e.message)) {
+      throw new Error('wrong admin password. Set ADMIN_PASSWORD to match the deployment.');
+    }
+    throw e;
+  }
   const tests = existing.filter((b) => b.address.startsWith(PREFIX));
 
   if (REMOVE) {
