@@ -14,8 +14,70 @@ input, textarea { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; }
 .nav-link { transition: color 0.1s ease; }
 .nav-link:hover { color: #111; }
 
-.vote-card { transition: transform 0.15s ease; }
-.vote-card:hover { transform: translateY(-2px); }
+/* ---- Vote screen -------------------------------------------------------
+   Desktop keeps the two cards side by side on a single non-scrolling screen.
+   Below 760px they stack, and the shell releases its 100vh lock so the taller
+   column can scroll. */
+
+.shell { min-height: 100vh; display: flex; flex-direction: column; }
+.shell-lock { height: 100vh; overflow: hidden; }
+
+.vote-screen {
+  flex: 1; display: flex; flex-direction: column;
+  align-items: center; justify-content: center;
+  min-height: 0; overflow: hidden;
+}
+.vote-head { display: flex; flex-direction: column; align-items: center; text-align: center; padding: 36px 20px 0; flex: none; }
+.vote-stage { flex: none; display: flex; align-items: center; justify-content: center; padding: 28px 32px 0; gap: 32px; }
+.vote-divider { display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; flex: none; }
+.vote-foot { flex: none; padding: 18px 20px 0; }
+
+.vote-card {
+  position: relative;
+  width: min(38vw, 46vh, 400px);
+  display: flex;
+  flex-direction: column;
+  background: #fff;
+  border: 1px solid #ececec;
+  border-radius: 6px;
+  overflow: hidden;
+  cursor: pointer;
+  box-shadow: 0 1px 2px rgba(17, 17, 17, 0.05), 0 6px 16px rgba(17, 17, 17, 0.08);
+  transition: transform 0.15s ease, box-shadow 0.15s ease;
+}
+.vote-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 2px 4px rgba(17, 17, 17, 0.06), 0 14px 28px rgba(17, 17, 17, 0.13);
+}
+.vote-card:active { transform: translateY(-1px); }
+
+.skip-btn {
+  display: flex; align-items: center; gap: 6px;
+  background: transparent; border: none; padding: 4px 6px; cursor: pointer;
+  color: #767676; font-size: 11px; letter-spacing: 0.04em; white-space: nowrap;
+  border-radius: 4px; transition: color 0.1s ease, background 0.1s ease;
+}
+.skip-btn:hover { color: #111; background: #f9f9f9; }
+.skip-key {
+  display: inline-flex; align-items: center; justify-content: center;
+  width: 22px; height: 22px; border-radius: 3px;
+  background: #f9f9f9; border: 1px solid #e0e0e0;
+  color: #111; font-size: 11px; font-weight: 700;
+}
+
+@media (max-width: 760px) {
+  /* Two stacked squares can't fit one screen — let the page scroll instead. */
+  .shell-lock { height: auto; overflow: visible; }
+  .vote-screen { overflow: visible; justify-content: flex-start; }
+  .vote-head { padding: 26px 18px 0; }
+  .vote-stage { flex-direction: column; gap: 16px; padding: 22px 18px 0; width: 100%; }
+  .vote-card { width: min(88vw, 420px); }
+  .vote-divider { flex-direction: row; gap: 14px; }
+  .vote-foot { padding: 22px 20px 34px; }
+  /* The keycap is meaningless without a keyboard; the button still taps. */
+  .skip-key { display: none; }
+  .skip-btn { border: 1px solid #e0e0e0; padding: 7px 16px; font-size: 12px; }
+}
 
 .rank-row { transition: background 0.1s ease; }
 .rank-row:hover { background: #f9f9f9; }

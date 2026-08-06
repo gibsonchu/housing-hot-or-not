@@ -289,7 +289,7 @@ export default function App() {
   const pillBtn = { background: '#fff', color: ink, border: `1.5px solid ${line}`, padding: '7px 14px', cursor: 'pointer', fontSize: 12, fontWeight: 600, borderRadius: 999 };
 
   const VoteCard = ({ side, b, badge, onVote, isFlash }) => (
-    <div onClick={onVote} className="vote-card" style={{ position: 'relative', width: 'min(38vw,48vh,400px)', cursor: 'pointer', background: '#fff', border: `1px solid ${line}`, borderRadius: 4, overflow: 'hidden', display: 'flex', flexDirection: 'column' }}>
+    <div onClick={onVote} className="vote-card">
       <div style={{ position: 'relative', aspectRatio: '1 / 1', overflow: 'hidden' }}>
         <Photo photo={b.photo} style={{ position: 'absolute', inset: 0 }} />
         <div style={{ position: 'absolute', left: 10, bottom: 10, background: 'rgba(255,255,255,0.88)', color: ink, padding: '3px 8px', borderRadius: 2, fontSize: 11, fontFamily: sans, fontWeight: 700, letterSpacing: '0.06em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
@@ -317,7 +317,7 @@ export default function App() {
   const adminOk = !!adminKey;
 
   return (
-    <div style={{ fontFamily: sans, fontVariantNumeric: 'tabular-nums', color: ink, background: '#fff', height: screen === 'vote' ? '100vh' : 'auto', minHeight: '100vh', overflow: screen === 'vote' ? 'hidden' : 'visible', display: 'flex', flexDirection: 'column' }}>
+    <div className={screen === 'vote' ? 'shell shell-lock' : 'shell'} style={{ fontFamily: sans, fontVariantNumeric: 'tabular-nums', color: ink, background: '#fff' }}>
 
       <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', background: '#fff', borderBottom: `1px solid ${line}`, padding: '12px 22px', flexWrap: 'wrap', gap: 10 }}>
         <button onClick={() => setScreen('vote')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', textAlign: 'left', padding: 0, fontFamily: serif, fontSize: 18, fontWeight: 700, color: ink, letterSpacing: '0em' }}>
@@ -339,21 +339,20 @@ export default function App() {
       )}
 
       {screen === 'vote' && (
-        <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, overflow: 'hidden' }}>
-          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '36px 20px 0', flex: 'none' }}>
+        <div className="vote-screen">
+          <div className="vote-head">
             <h1 style={{ fontFamily: serif, fontSize: 'clamp(22px,2.8vw,30px)', fontWeight: 400, color: ink, margin: 0, lineHeight: 1.2, maxWidth: 600, textWrap: 'balance' }}>Which building would you like to live in or near?</h1>
-            <div style={{ fontSize: 12, fontFamily: sans, color: gray, marginTop: 18, letterSpacing: '0.02em' }}>Click a card, or use <kbd style={kbd}>A</kbd> / <kbd style={kbd}>D</kbd> or <kbd style={kbd}>←</kbd> / <kbd style={kbd}>→</kbd> to vote</div>
           </div>
 
           {left && right ? (
-            <div style={{ flex: 'none', display: 'flex', alignItems: 'center', justifyContent: 'center', padding: '24px 32px 0', gap: 32 }}>
+            <div className="vote-stage">
               <VoteCard side="left" b={left} badge="A" onVote={() => vote(0)} isFlash={flash === 'left'} />
-              <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', gap: 12, flex: 'none' }}>
+              <div className="vote-divider">
                 <div style={{ fontFamily: serif, fontSize: 14, fontStyle: 'italic', color: gray }}>or</div>
-                <span style={{ display: 'flex', alignItems: 'center', gap: 6, color: gray, fontSize: 11, letterSpacing: '0.04em', whiteSpace: 'nowrap' }}>
-                  <span style={{ display: 'inline-flex', alignItems: 'center', justifyContent: 'center', width: 22, height: 22, borderRadius: 3, background: subtle, border: `1px solid ${line}`, color: ink, fontSize: 11, fontWeight: 700, fontFamily: sans }}>S</span>
+                <button onClick={() => newPair()} className="skip-btn" aria-label="Skip this pair">
+                  <span className="skip-key">S</span>
                   skip
-                </span>
+                </button>
               </div>
               <VoteCard side="right" b={right} badge="D" onVote={() => vote(1)} isFlash={flash === 'right'} />
             </div>
@@ -362,7 +361,7 @@ export default function App() {
               {loading ? 'Loading buildings…' : loadError ? 'No buildings loaded.' : 'Need at least two buildings — add some in Admin.'}
             </div>
           )}
-          <div style={{ flex: 'none', padding: '16px 20px 0', textAlign: 'center', fontSize: 11, fontFamily: sans, letterSpacing: '0.04em', color: gray, display: 'flex', flexDirection: 'column', gap: 6 }}>
+          <div className="vote-foot" style={{ textAlign: 'center', fontSize: 11, fontFamily: sans, letterSpacing: '0.04em', color: gray, display: 'flex', flexDirection: 'column', gap: 6 }}>
             <div>{totalVotes.toLocaleString()} total votes&nbsp;&nbsp;·&nbsp;&nbsp;{userVotes.toLocaleString()} votes you cast</div>
             {userVotes >= PROFILE_AT ? (
               <button onClick={() => setScreen('profile')} style={{ background: 'transparent', border: 'none', cursor: 'pointer', color: ink, fontSize: 11, fontFamily: sans, fontWeight: 700, letterSpacing: '0.1em', textTransform: 'uppercase', textDecoration: 'underline', textUnderlineOffset: 3, padding: 0 }}>
@@ -601,5 +600,4 @@ export default function App() {
   );
 }
 
-const kbd = { fontFamily: sans, fontSize: 11, background: '#f4f4f4', border: '1px solid #d8d8d8', borderRadius: 3, padding: '1px 5px' };
 const labelStyle = { display: 'flex', flexDirection: 'column', gap: 7, fontSize: 11, letterSpacing: '0.1em', textTransform: 'uppercase', color: gray };
