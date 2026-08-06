@@ -32,4 +32,10 @@ function apiRoutes() {
 // https://vite.dev/config/
 export default defineConfig({
   plugins: [react(), apiRoutes()],
+  build: {
+    // Without this the minifier rewrites `(max-width: 760px)` to the range form
+    // `(width <= 760px)`, which iOS Safari below 16.4 ignores — silently losing
+    // the stacked mobile layout on the devices that need it most.
+    cssTarget: 'safari14',
+  },
 })
