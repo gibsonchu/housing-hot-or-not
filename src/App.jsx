@@ -42,7 +42,6 @@ export default function App() {
 
   const [pair, setPair] = useState(null);
   const [flash, setFlash] = useState(null);
-  const [flashDelta, setFlashDelta] = useState(0);
   const [flashAgree, setFlashAgree] = useState(null);
   const [detailId, setDetailId] = useState(null);
   const [activeQ, setActiveQ] = useState(null);
@@ -173,7 +172,6 @@ export default function App() {
       setTotalVotes(r.totalVotes);
       setUserVotes(r.userVotes);
       setFlash(idx === 0 ? 'left' : 'right');
-      setFlashDelta(r.delta);
       setFlashAgree(r.agreed);
       setTimeout(() => {
         votingRef.current = false;
@@ -297,13 +295,12 @@ export default function App() {
         <div style={{ position: 'absolute', left: 10, bottom: 10, background: 'rgba(255,255,255,0.88)', color: ink, padding: '3px 8px', borderRadius: 2, fontSize: 11, fontFamily: sans, fontWeight: 700, letterSpacing: '0.06em', backdropFilter: 'blur(4px)' }}>ELO {b.rating}</div>
         {isFlash && (
           <div style={{ position: 'absolute', inset: 0, display: 'flex', alignItems: 'center', justifyContent: 'center', background: 'rgba(0,0,0,0.18)' }}>
-            <div className="pop" style={{ background: '#fff', color: ink, padding: '18px 24px', borderRadius: 4, textAlign: 'center', border: `1px solid ${line}`, maxWidth: '86%' }}>
-              <div style={{ fontFamily: serif, fontSize: 32, fontWeight: 700, color: ink }}>+{flashDelta}</div>
-              <div style={{ fontSize: 11, letterSpacing: '0.18em', textTransform: 'uppercase', color: gray, marginTop: 2 }}>ELO</div>
+            <div className="pop" style={{ background: '#fff', color: ink, padding: '20px 26px', borderRadius: 4, textAlign: 'center', border: `1px solid ${line}`, maxWidth: '86%' }}>
               {flashAgree != null && (
-                <div style={{ fontSize: 12, color: gray, marginTop: 10, paddingTop: 10, borderTop: `1px solid ${line}`, lineHeight: 1.4 }}>
-                  You agreed with <b style={{ color: ink, fontWeight: 700 }}>{flashAgree}%</b> of voters.
-                </div>
+                <>
+                  <div style={{ fontFamily: serif, fontSize: 32, fontWeight: 700, color: ink, lineHeight: 1 }}>{flashAgree}%</div>
+                  <div style={{ fontSize: 12, color: gray, marginTop: 8, lineHeight: 1.4 }}>of voters agreed with you</div>
+                </>
               )}
             </div>
           </div>
@@ -344,7 +341,7 @@ export default function App() {
       {screen === 'vote' && (
         <div style={{ flex: 1, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', minHeight: 0, overflow: 'hidden' }}>
           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', textAlign: 'center', padding: '36px 20px 0', flex: 'none' }}>
-            <h1 style={{ fontFamily: serif, fontSize: 'clamp(22px,2.8vw,30px)', fontWeight: 400, color: ink, margin: 0, lineHeight: 1.2, maxWidth: 600, textWrap: 'balance' }}>Which building is better designed?</h1>
+            <h1 style={{ fontFamily: serif, fontSize: 'clamp(22px,2.8vw,30px)', fontWeight: 400, color: ink, margin: 0, lineHeight: 1.2, maxWidth: 600, textWrap: 'balance' }}>Which building would you like to live in or near?</h1>
             <div style={{ fontSize: 12, fontFamily: sans, color: gray, marginTop: 18, letterSpacing: '0.02em' }}>Click a card, or use <kbd style={kbd}>A</kbd> / <kbd style={kbd}>D</kbd> or <kbd style={kbd}>←</kbd> / <kbd style={kbd}>→</kbd> to vote</div>
           </div>
 
